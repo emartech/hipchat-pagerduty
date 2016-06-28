@@ -10,7 +10,12 @@ class App::Trigger < Rack::App
     message = fetch_message_from payload
     description = get_incident_description(service_name, message)
 
-    Pagerduty.new(service_key).trigger(description)
+    incident_key = trigger_incident_on_service(service_key, description)
+
+    {color: 'green',
+     message: "incident key: #{incident_key}",
+     notify: false,
+     message_format: 'text'}.to_json
   end
 
 
@@ -24,7 +29,6 @@ class App::Trigger < Rack::App
 
   def fetch_message_from(payload)
     hipchat_message = JSON.parse payload
-    p hipchat_message['item']['message']['message']
     hipchat_message['item']['message']['message']
   end
 
@@ -32,6 +36,12 @@ class App::Trigger < Rack::App
   def get_incident_description(service_name, message)
     matches = message.match /^\/#{service_name}\s+(?<incident_description>.*)/
     matches[:incident_description]
+  end
+
+
+  def trigger_incident_on_service(service_key, description)
+    incident = Pagerduty.new(service_key).trigger(description)
+    incident.incident_key
   end
 
 end

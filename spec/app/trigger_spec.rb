@@ -51,6 +51,25 @@ describe App::Trigger do
                                               'message_format' => 'text'})
     end
 
+
+    it 'should respond with failure on error' do
+      client = instance_double(Pagerduty)
+      incident = instance_double(PagerdutyIncident)
+
+      allow(Pagerduty).to receive(:new).and_return client
+      allow(client).to receive(:trigger).and_return incident
+
+      allow(incident).to receive(:incident_key).and_return 'triggered_incident_key_789'
+
+      response = post '/trigger/my_test_service', payload: {item: {message: {message: '/my_non_matching_service some interesting incident description'}}}.to_json
+
+      expect(response.status).to eq 200
+      expect(JSON.parse response.body).to eq({'color' => 'red',
+                                              'message' => 'failed to trigger an incident',
+                                              'notify' => false,
+                                              'message_format' => 'text'})
+    end
+
   end
 
 end

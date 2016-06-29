@@ -4,18 +4,25 @@ require 'pagerduty'
 class App::Trigger < Rack::App
 
   post '/trigger/:service_name' do
-    service_name = params['service_name']
-    service_key = service_key_of service_name
+    begin
+      service_name = params['service_name']
+      service_key = service_key_of service_name
 
-    message = fetch_message_from payload
-    description = get_incident_description(service_name, message)
+      message = fetch_message_from payload
+      description = get_incident_description(service_name, message)
 
-    incident_key = trigger_incident_on_service(service_key, description)
+      incident_key = trigger_incident_on_service(service_key, description)
 
-    {color: 'green',
-     message: "incident key: #{incident_key}",
-     notify: false,
-     message_format: 'text'}.to_json
+      {color: 'green',
+       message: "incident key: #{incident_key}",
+       notify: false,
+       message_format: 'text'}.to_json
+    rescue StandardError
+      {color: 'red',
+       message: 'failed to trigger an incident',
+       notify: false,
+       message_format: 'text'}.to_json
+    end
   end
 
 

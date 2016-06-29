@@ -12,12 +12,14 @@ GEM
     diff-lcs (1.2.5)
     i18n (0.7.0)
     json (1.8.3)
+    kgio (2.10.0)
     minitest (5.9.0)
     pagerduty (2.1.0)
       json (>= 1.7.7)
     rack (1.6.4)
     rack-app (3.6.0)
       rack
+    raindrops (0.16.0)
     rake (11.2.2)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
@@ -35,6 +37,9 @@ GEM
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unicorn (5.1.0)
+      kgio (~> 2.6)
+      raindrops (~> 0.7)
 
 PLATFORMS
   ruby
@@ -45,6 +50,7 @@ DEPENDENCIES
   rack-app
   rake
   rspec
+  unicorn
 
 BUNDLED WITH
    1.12.5
